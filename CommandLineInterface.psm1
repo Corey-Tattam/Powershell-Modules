@@ -24,91 +24,84 @@
  =======================================================================
  #>
 
+#region - - - - - - CLI Display Settings - - - - - - 
 
-##      Menu Display Settings
-##================================
+class CliColours {
 
-#region Menu Display Settings
+    #region - - - - - - Properties - - - - - - 
 
-class MenuColours {
     [System.ConsoleColor] $Text
     [System.ConsoleColor] $Highlight
     [System.ConsoleColor] $Option
     [System.ConsoleColor] $Information
-} ## MenuColours
 
-class MenuDisplayOptions {
+    #endregion Properties
 
-    ##           Properties
-    ##================================
+} ## CliColours
+
+class CliDisplayOptions {
+
+    #region - - - - - - Properties - - - - - - 
         
-    [int] $Indent
-    [char] $BorderCharacter
-    [MenuColours] $Colours 
-    [int] $BorderWidth
+    [int] $MenuIndent
+    [char] $MenuBorderCharacter
+    [CliColours] $Colours 
+    [int] $MenuBorderWidth
 
+    #endregion Properties
 
-    ##          Constructors
-    ##================================
+    #region - - - - - - Constructors - - - - - - 
 
-    MenuDisplayOptions () {
-        $this.Colours = [MenuColours]::new();
+    CliDisplayOptions () {
+        $this.Colours = [CliColours]::new();
     }
 
-} ## MenuDisplayOptions
+    #endregion Constructors
 
-#endregion Menu Display Settings
+} ## CliDisplayOptions
 
+#endregion CLI Display Settings
 
-##            Menu Items
-##================================
-
-#region Menu Items
+#region - - - - - - Menu Items - - - - - - 
 
 class MenuItem {
  
-    ##           Properties
-    ##================================
+    #region - - - - - - Properties - - - - - - 
 
-    [string] $Text;
+    [string] $Text
     
+    #endregion Properties
 
-    ##          Constructors
-    ##================================
+    #region - - - - - - Constructors - - - - - - 
     
     MenuItem() { }
 
     MenuItem([string] $text) {
-        $this.Text = $text;
+        $this.Text = $text
     }     
 
+    #endregion Constructors
 
-    ##            Methods
-    ##================================
+    #region - - - - - - Methods - - - - - - 
 
     [string] ToString() {
-        return $this.Text;
+        return $this.Text
     }
+
+    #endregion Methods
     
 } ## MenuItem
 
 class MenuOptionItem : MenuItem {
 
-    ##           Properties
-    ##================================
+    #region - - - - - - Properties - - - - - - 
 
     [bool] $IsHeading
     [int] $Position
 
+    #endregion Properties
 
-    ##          Constructors
-    ##================================
-
-
-
-
-    ##            Methods
-    ##================================
+    #region - - - - - - Methods - - - - - - 
 
     static [MenuOptionItem] CreateMenuOptionHeading ([string] $headingtext) {
         $HeadingItem = New-Object MenuOptionItem
@@ -116,7 +109,7 @@ class MenuOptionItem : MenuItem {
         $HeadingItem.Text = $headingtext
 
         return $HeadingItem
-    }
+    } #CreateMenuOptionHeading
 
     static [MenuOptionItem] CreateMenuOptionItem ([string] $itemText, [int] $position) {
         $OptionItem = New-Object MenuOptionItem
@@ -125,83 +118,88 @@ class MenuOptionItem : MenuItem {
         $OptionItem.IsHeading = $false
 
         return $OptionItem
-    }
+    } #CreateMenuOptionItem
 
     [string] ToString() {
         
         if ($this.IsHeading) { return $this.Text }
         else { return ($this.Position.ToString() + ". " + $this.Text) }               
-    }
+    } #ToString
+
+    #endregion Methods
 
 } ## MenuOptionItem
 
 class MenuInformationItem : MenuItem {
 
-    ##           Properties
-    ##================================
+    #region - - - - - - Properties - - - - - - 
 
-    [bool] $IsHighlighted = $false;
-    [string] $Label;
+    [bool] $IsHighlighted = $false
+    [string] $Label
 
+    #endregion Properties
 
-    ##          Constructors
-    ##================================
+    #region - - - - - - Constructors - - - - - - 
 
     MenuInformationItem([string] $text, [bool] $isHighlighted = $false) {
 
-        $this.Text = $text;
-        $this.IsHighlighted = $isHighlighted;
+        $this.Text = $text
+        $this.IsHighlighted = $isHighlighted
     }
 
     MenuInformationItem([string] $label, [string] $text, [bool] $isHighlighted = $false) {
 
-        $this.Label = $label;
-        $this.Text = $text;
-        $this.IsHighlighted = $isHighlighted;
+        $this.Label = $label
+        $this.Text = $text
+        $this.IsHighlighted = $isHighlighted
     }
 
+    #endregion Constructors
 
-    ##            Methods
-    ##================================
+    #region - - - - - - Methods - - - - - - 
 
     [string] ToString() {
-        [string] $Output = "";
+        [string] $Output = ""
         if (![string]::IsNullOrEmpty($this.Label)) { $Output += $this.Label + ": "; }
-        $Output += $this.Text;
-        return $Output;
+        $Output += $this.Text
+        return $Output
     }
+
+    #endregion Methods
 
 } ## MenuInformationItem
 
 #endregion Menu Items
 
+#region - - - - - - Menu Options - - - - - - 
 
-##          Menu Settings
-##================================
+class MenuOptions {
 
-#region Menu Settings
+    #region - - - - - - Properties - - - - - - 
 
-class MenuSettings {
-    
-    ##           Properties
-    ##================================
-
-    [string] $Title;
-    [string] $SubTitle;
+    [string] $Title
+    [string] $SubTitle
         
-    [MenuDisplayOptions] $DisplayOptions;
-    [MenuInformationItem[]] $InformationItems = @();  
-    [MenuOptionItem[]] $OptionItems = @();
+    [CliDisplayOptions] $DisplayOptions
+    [MenuInformationItem[]] $InformationItems = @()
+    [MenuOptionItem[]] $OptionItems = @()
 
+    #endregion Properties
 
-    ##          Constructors
-    ##================================
+    #region - - - - - - Constructors - - - - - - 
 
-    MenuSettings ([MenuDisplayOptions] $menuDisplayOptions) {
-        $this.DisplayOptions = $menuDisplayOptions;
+    MenuOptions ([CliDisplayOptions] $cliDisplayOptions) {
+        $this.DisplayOptions = $cliDisplayOptions
     }
 
-} ## MenuSettings
+	MenuOptions ([CliDisplayOptions] $cliDisplayOptions, [string] $title) {
+        $this.DisplayOptions = $cliDisplayOptions
+		$this.Title = $title
+    }
+
+    #endregion Constructors
+
+} ## MenuOptions
 
 #endregion Menu Settings
 
@@ -209,19 +207,19 @@ class MenuSettings {
  <#
  =======================================================================
 
-                           Public Functions
+                               Functions
 
  =======================================================================
  #>
 
- #region Public Functions
+ #region - - - - - - Public Functions - - - - - - 
 
  <#
   .SYNOPSIS
    Given menu settings and menu items, print the menu.
 
   .PARAMETER options
-   The MenuSettings class that contains the display format, and the menu items to print to screen.
+   The MenuOptions class that contains the display format, and the menu items to print to screen.
 
   .EXAMPLE
     # Display a simple menu..
@@ -231,8 +229,8 @@ function Show-Menu {
     param (
         [Parameter(Mandatory=$true)]
             [ValidateNotNull()]
-            [Alias("MenuSettings")]
-            [MenuSettings] $options
+            [Alias("MenuOptions")]
+            [MenuOptions] $options
     )
     begin {
         $DisplayOptions = $options.DisplayOptions
@@ -240,49 +238,45 @@ function Show-Menu {
     process {
               
         ## Border & Title.  
-        Write-MenuBorderLine -Width $DisplayOptions.BorderWidth -Character $DisplayOptions.BorderCharacter -Colour $DisplayOptions.Colours.Text -PrependNewLine -AppendNewLine        
-        Write-CenterAlignedText -Width $DisplayOptions.BorderWidth -Text $options.Title -Colour $options.DisplayOptions.Colours.Text        
-        Write-MenuBorderLine -Width $DisplayOptions.BorderWidth -Character $DisplayOptions.BorderCharacter -Colour $DisplayOptions.Colours.Text -PrependNewLine -AppendNewLine
+        Write-MenuBorderLine -Width $DisplayOptions.MenuBorderWidth -Character $DisplayOptions.MenuBorderCharacter -Colour $DisplayOptions.Colours.Text -PrependNewLine -AppendNewLine        
+        Write-CenterAlignedText -Width $DisplayOptions.MenuBorderWidth -Text $options.Title -Colour $options.DisplayOptions.Colours.Text        
+        Write-MenuBorderLine -Width $DisplayOptions.MenuBorderWidth -Character $DisplayOptions.MenuBorderCharacter -Colour $DisplayOptions.Colours.Text -PrependNewLine -AppendNewLine
         
         ## Information Items.
         if ($options.InformationItems.Count -gt 0) {             
 
-            ## Write the Highlighted Information Items.
+            ## Separate the items.
             [MenuInformationItem[]] $HighlightedItems = @($options.InformationItems | ? { $_.IsHighlighted -eq $true })
-            if ($HighlightedItems.Count -gt 0) { Write-InformationItems -Items $HighlightedItems -Colour $DisplayOptions.Colours.Highlight -Indent $DisplayOptions.Indent }
+			[MenuInformationItem[]] $StandardItems    = @($options.InformationItems | ? { $_.IsHighlighted -eq $false })
+
+			## Write the Highlighted Information Items.
+            if ($HighlightedItems.Count -gt 0) { Write-InformationItems -Items $HighlightedItems -Colour $DisplayOptions.Colours.Highlight -Indent $DisplayOptions.MenuIndent }
             
-            ## Write the Standard Information Items.
-            [MenuInformationItem[]] $StandardItems = @($options.InformationItems | ? { $_.IsHighlighted -eq $false })
-            if ($StandardItems.Count -gt 0) { Write-InformationItems -Items $StandardItems -Colour $DisplayOptions.Colours.Information -Indent $DisplayOptions.Indent }
+			## Add Separator
+			if (($HighlightedItems.Count -gt 0) -and ($StandardItems.Count -gt 0)) { Write-Host "" }
+
+            ## Write the Standard Information Items.            
+            if ($StandardItems.Count -gt 0) { Write-InformationItems -Items $StandardItems -Colour $DisplayOptions.Colours.Information -Indent $DisplayOptions.MenuIndent }
 
             ## Ouptut the Border.
-            Write-MenuBorderLine -Width $DisplayOptions.BorderWidth -Character $DisplayOptions.BorderCharacter -Colour $DisplayOptions.Colours.Text -PrependNewLine
+            Write-MenuBorderLine -Width $DisplayOptions.MenuBorderWidth -Character $DisplayOptions.MenuBorderCharacter -Colour $DisplayOptions.Colours.Text -PrependNewLine
         }   
 
         ## Write the Sub Title.
-        Write-CenterAlignedText -Width $DisplayOptions.BorderWidth -Text $options.SubTitle -Colour $options.DisplayOptions.Colours.Text
-        Write-MenuBorderLine -Width $DisplayOptions.BorderWidth -Character $DisplayOptions.BorderCharacter -Colour $DisplayOptions.Colours.Text
+        Write-CenterAlignedText -Width $DisplayOptions.MenuBorderWidth -Text $options.SubTitle -Colour $options.DisplayOptions.Colours.Text
+        Write-MenuBorderLine -Width $DisplayOptions.MenuBorderWidth -Character $DisplayOptions.MenuBorderCharacter -Colour $DisplayOptions.Colours.Text
         
         ## Write the menu items.
-        Write-MenuOptionItems -Items $options.OptionItems -HeadingColour $DisplayOptions.Colours.Text -OptionColour $DisplayOptions.Colours.Option -Indent $DisplayOptions.Indent -UnderlineCharacter $DisplayOptions.BorderCharacter
+        Write-MenuOptionItems -Items $options.OptionItems -HeadingColour $DisplayOptions.Colours.Text -OptionColour $DisplayOptions.Colours.Option -Indent $DisplayOptions.MenuIndent -UnderlineCharacter $DisplayOptions.MenuBorderCharacter
         
         ## Write the final border.
-        Write-MenuBorderLine -Width $DisplayOptions.BorderWidth -Character $DisplayOptions.BorderCharacter -Colour $DisplayOptions.Colours.Text -PrependNewLine
+        Write-MenuBorderLine -Width $DisplayOptions.MenuBorderWidth -Character $DisplayOptions.MenuBorderCharacter -Colour $DisplayOptions.Colours.Text -PrependNewLine
     }
 } Export-ModuleMember -Function Show-Menu
 
 #endregion Public Functions
 
-
- <#
- =======================================================================
-
-                           Private Functions
-
- =======================================================================
- #>
-
- #region Private Functions
+ #region - - - - - - Private Functions - - - - - - 
 
 function Get-MenuInformationItemOffset {
     param (
@@ -399,7 +393,7 @@ function Write-InformationItems {
         if ($informationItems.Count -eq 0) { return }
     }
     process {
-        Write-Host "";
+        #Write-Host "";
         for ($i = 0; $i -lt $informationItems.Count; $i++) {
             $IndentOffset = (Get-MenuInformationItemOffset $informationItems $i) + $indentation;
             Write-IndentedText -indent $IndentOffset -text $informationItems[$i].ToString() -foregroundColour $foregroundColour 
